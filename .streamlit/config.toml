@@ -1,2 +1,6 @@
 [server]
+port = 8501
+enableCORS = false
+enableXsrfProtection = false
+headless = true
 fileWatcherType = "none"
