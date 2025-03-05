@@ -1,3 +1,4 @@
+# src/speech_to_text.py
 import whisper
 import logging
 

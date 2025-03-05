@@ -1,12 +1,13 @@
+# src/youtube_utils.py
 import re
 import logging
 from pathlib import Path
 from typing import Optional
-import os
 
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 
 logger = logging.getLogger(__name__)
+
 
 def get_youtube_video_id(url: str) -> Optional[str]:
     """
@@ -26,9 +27,10 @@ def get_youtube_video_id(url: str) -> Optional[str]:
         logger.error("Impossible d'extraire l'ID de la vidéo depuis l'URL fournie.")
         return None
 
+
 def get_video_transcript(video_id: str, language: str = "fr") -> Optional[str]:
     """
-    Récupère les sous-titres de la vidéo dans la langue spécifiée en utilisant un proxy si défini.
+    Récupère les sous-titres de la vidéo dans la langue spécifiée.
 
     Args:
         video_id (str): ID de la vidéo.
@@ -37,16 +39,8 @@ def get_video_transcript(video_id: str, language: str = "fr") -> Optional[str]:
     Returns:
         Optional[str]: La transcription sous forme de texte ou None en cas d'échec.
     """
-    # Récupération des proxies depuis les variables d'environnement
-    proxies = {
-        "http": os.environ.get("HTTP_PROXY"),
-        "https": os.environ.get("HTTPS_PROXY")
-    }
-    # Conserver uniquement les proxies définis
-    proxies = {k: v for k, v in proxies.items() if v} or None
-
     try:
-        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[language], proxies=proxies)
+        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[language])
         return "\n".join(entry['text'] for entry in transcript)
     except NoTranscriptFound:
         logger.error(f"Aucun sous-titre trouvé pour la langue '{language}' pour la vidéo {video_id}.")
@@ -54,6 +48,7 @@ def get_video_transcript(video_id: str, language: str = "fr") -> Optional[str]:
     except Exception as e:
         logger.exception("Erreur lors de la récupération des sous-titres : %s", e)
         return None
+
 
 def download_audio(video_url: str) -> Optional[Path]:
     """
@@ -83,6 +78,7 @@ def download_audio(video_url: str) -> Optional[Path]:
         'quiet': True,
         'no_warnings': True,
     }
+    import os
     ffmpeg_location = os.environ.get("FFMPEG_LOCATION")
     if ffmpeg_location:
         ydl_opts['ffmpeg_location'] = ffmpeg_location
