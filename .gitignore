@@ -1,5 +1,9 @@
-"venv/" 
-"*.dll" 
-"*.lib" 
-"__pycache__/" 
-"*.log" 
+# Exclure l'environnement virtuel et les fichiers temporaires
+venv/
+__pycache__/
+.DS_Store
+*.log
+
+# Exclure les fichiers volumineux et binaires inutiles
+*.dll
+*.lib
